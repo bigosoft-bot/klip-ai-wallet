@@ -1,20 +1,38 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { WalletProvider, useWallet } from './src/context/WalletContext';
+import WalletSetupScreen from './src/screens/WalletSetupScreen';
+import HomeScreen from './src/screens/HomeScreen';
+import SendScreen from './src/screens/SendScreen';
+import ReceiveScreen from './src/screens/ReceiveScreen';
+
+const Stack = createStackNavigator();
+
+const AppNavigator: React.FC = () => {
+  const { wallet } = useWallet();
+
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {wallet ? (
+          <>
+            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Send" component={SendScreen} />
+            <Stack.Screen name="Receive" component={ReceiveScreen} />
+          </>
+        ) : (
+          <Stack.Screen name="WalletSetup" component={WalletSetupScreen} />
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <WalletProvider>
+      <AppNavigator />
+    </WalletProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
